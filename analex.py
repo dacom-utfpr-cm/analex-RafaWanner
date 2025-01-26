@@ -1,5 +1,7 @@
-# from automata.fa.Moore import Moore
+from automata.fa.Moore import Moore
 import sys, os
+import string
+from collections import defaultdict
 
 from myerror import MyError
 
@@ -8,34 +10,148 @@ error_handler = MyError('LexerErrors')
 global check_cm
 global check_key
 
-# moore = Moore(['q0', 'q1', 'q2', 'q3', 'q4'],
-#               ['i' , 'n' , 't', ' '],
-#               ['INT', 'ELSE'],
-#               {
-#                   'q0' : {
-#                       'i' : 'q1',
-#                   },
-#                   'q1': {
-#                       'n': 'q2',
-#                   },
-#                   'q2': {
-#                       't': 'q3',
+#
+# ALPHABET
+#
 
-#                   },
-#                   'q3': {
-#                       '\n': 'q4',
-#                   }
-#               },
+alphabet = list(string.ascii_lowercase + string.ascii_uppercase)
 
-#               'q0',
-#               {
-#                   'q0' : '',
-#                   'q1' : '',
-#                   'q2' : '',
-#                   'q3' : '',
-#                   'q4' : 'INT'
-#               }
-#               )
+numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+misc = ['\n', ' ', '(', ')']
+
+fullList = alphabet + numbers + misc
+
+#
+# STATES
+#
+
+statesInit = ['q0']
+
+statesINT = ['q_INT_1',
+             'q_INT_2',
+             'q_INT_3'
+             ]
+
+statesID = ['q_ID_1',
+             'q_ID_2'
+             ]
+
+statesLPAREN = ['q_ID_1',
+             'q_ID_2'
+             ]
+
+states = statesInit + statesINT + statesID + statesLPAREN
+
+#
+# TRANSTIONS
+#
+
+# Função para combinar as transições
+def combine_transitions(*transition_dicts):
+    # Criar um defaultdict para lidar com a combinação sem sobrescrever as transições
+    combined = defaultdict(dict)
+
+    for transition_dict in transition_dicts:
+        for state, transitions in transition_dict.items():
+            for symbol, next_state in transitions.items():
+                # Se a transição já existir, não sobrescreve
+                if symbol not in combined[state]:
+                    combined[state][symbol] = next_state
+
+    return dict(combined)
+
+transitionsInit = {
+    'q0': {
+        '\n': 'q0',
+    }
+}
+
+transitionsINT = {
+    'q0': {
+        'i': 'q_INT_1',
+    },
+    'q_INT_1': {
+        'n': 'q_INT_2',
+    },
+    'q_INT_2': {
+        't': 'q_INT_3',
+    },
+    'q_INT_3': {
+        '\n': 'q0',
+        ' ' : 'q0',
+    }
+}
+
+transitionsID = {
+    'q0': {
+        
+    },
+    'q_ID_1': {
+        
+    },
+    'q_ID_2': {
+        '\n': 'q0',
+        ' ' : 'q0',
+    }
+}
+
+# Adicionar conexões de q0 para q_ID_1 com todas as letras do alfabeto menos as letras i
+transitionsID['q0'].update({letter: 'q_ID_1' for letter in alphabet if letter not in ['i']})
+
+# Adicionar conexões de q_ID_1 para q_ID_2 com todas as letras do alfabeto e todos os numeros
+transitionsID['q_ID_1'].update({letter: 'q_ID_2' for letter in alphabet})
+transitionsID['q_ID_1'].update({letter: 'q_ID_2' for letter in numbers})
+
+# Adicionar conexões de q_ID_2 para q_ID_2 com todas as letras do alfabeto e todos os numeros
+transitionsID['q_ID_2'].update({letter: 'q_ID_2' for letter in alphabet})
+transitionsID['q_ID_2'].update({number: 'q_ID_2' for number in numbers})
+
+transitions = combine_transitions(transitionsInit, transitionsINT, transitionsID)
+
+#
+# TOKENS
+#
+
+tokens = ['INT',
+           'ID'
+           ]
+
+#
+# OUTPUTS
+#
+
+outputsInit = {
+                'q0' : ''
+                }
+
+outputsINT = {
+                'q_INT_1' : '',
+                'q_INT_2' : '',
+                'q_INT_3' : 'INT\n'
+                }
+
+outputsID = {
+                'q_ID_1' : 'ID',
+                'q_ID_2' : ''
+                }
+
+outputs = outputsInit.copy()
+outputs.update(outputsINT)
+outputs.update(outputsID)
+
+
+#
+# MOORE MACHINE
+#
+
+moore = Moore(states,
+              fullList,
+              tokens,
+              transitions,
+              'q0',
+              outputs
+              )
 
 def main():
     check_cm = False
@@ -71,7 +187,9 @@ def main():
             print(source_file)
             print("Lista de Tokens:")
         
-        #print(moore.get_output_from_string(source_file))
+        #print(moore)
+
+        print(moore.get_output_from_string(source_file).rstrip('\n'))
 
 
 if __name__ == "__main__":
