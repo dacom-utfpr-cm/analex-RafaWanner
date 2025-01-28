@@ -2,7 +2,8 @@ from automata.fa.Moore import Moore
 import sys, os
 import string
 from collections import defaultdict
-
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
 from myerror import MyError
 
 error_handler = MyError('LexerErrors')
@@ -1104,6 +1105,57 @@ moore = Moore(states,
               outputs
               )
 
+def moore_to_jflap(states, alphabet, tokens, transitions, initial_state, outputs, output_file):
+    # Cria uma cópia dos outputs com '\n' substituído por ' '
+    sanitized_outputs = {state: output.replace('\n', ' ') for state, output in outputs.items()}
+
+    # Cria a estrutura XML
+    structure = ET.Element('structure')
+    automaton_type = ET.SubElement(structure, 'type')
+    automaton_type.text = 'moore'
+    automaton = ET.SubElement(structure, 'automaton')
+
+    # Mapeia os estados para IDs
+    state_map = {state: str(i) for i, state in enumerate(states)}
+
+    # Adiciona os estados ao XML
+    for state in states:
+        state_element = ET.SubElement(automaton, 'state', id=state_map[state], name=state)
+        
+        # Adiciona posições de placeholder
+        x = ET.SubElement(state_element, 'x')
+        y = ET.SubElement(state_element, 'y')
+        x.text = str(100 + 150 * (int(state_map[state]) % 5))  # Position X
+        y.text = str(100 + 150 * (int(state_map[state]) // 5))  # Position Y
+
+        # Marca o estado inicial
+        if state == initial_state:
+            ET.SubElement(state_element, 'initial')
+
+        # Adiciona o output do estado (sanitizado)
+        output = ET.SubElement(state_element, 'output')
+        output.text = sanitized_outputs.get(state, '')
+
+    # Adiciona as transições ao XML
+    for from_state, edges in transitions.items():
+        for symbol, to_state in edges.items():
+            transition = ET.SubElement(automaton, 'transition')
+            from_element = ET.SubElement(transition, 'from')
+            to_element = ET.SubElement(transition, 'to')
+            read = ET.SubElement(transition, 'read')
+            transout = ET.SubElement(transition, 'transout')
+
+            from_element.text = state_map[from_state]
+            to_element.text = state_map[to_state]
+            read.text = symbol
+
+            # Adiciona o output da transição (do output sanitizado do estado de destino)
+            transout.text = sanitized_outputs.get(to_state, '')
+
+    # Escreve o XML no arquivo
+    tree = ET.ElementTree(structure)
+    tree.write(output_file, encoding='utf-8', xml_declaration=True)
+
 def main():
     check_cm = False
     check_key = False
@@ -1141,6 +1193,8 @@ def main():
         #print(moore)
 
         print(moore.get_output_from_string(source_file).rstrip('\n'))
+
+        moore_to_jflap(states, alphabet, tokens, transitions, 'q0', outputs, 'moore_machine.jff')
 
 
 if __name__ == "__main__":
