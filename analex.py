@@ -19,7 +19,7 @@ alphabet = list(string.ascii_lowercase + string.ascii_uppercase)
 
 numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-misc = ['\n', ' ', '(', ')', '{', '}', ';', ',', '+', '-', '/', '*', '=']
+misc = ['\n', ' ', '(', ')', '[', ']', '{', '}', ';', ',', '+', '-', '/', '*', '=', '!']
 
 fullList = alphabet + numbers + misc
 
@@ -78,6 +78,14 @@ statesRPAREN = [
             'q_RPAREN'
             ]
 
+statesLBRACKETS = [
+            'q_LBRACKETS'
+            ]
+
+statesRBRACKETS = [
+            'q_RBRACKETS'
+            ]
+
 statesLBRACES= [
             'q_LBRACES'
             ]
@@ -117,6 +125,11 @@ statesEQUALS= [
             'q_EQUALS_2'
             ]
 
+statesDIFFERENT= [
+            'q_DIFFERENT_1',
+            'q_DIFFERENT_2'
+            ]
+
 statesCOMMENT = [
             'q_COMMENT_1',
             'q_COMMENT_2',
@@ -125,6 +138,8 @@ statesCOMMENT = [
             'q_DIVIDE_LINEBREAK',
             'q_DIVIDE_LPAREN',
             'q_DIVIDE_RPAREN',
+            'q_DIVIDE_LBRACKETS',
+            'q_DIVIDE_RBRACKETS',
             'q_DIVIDE_LBRACES',
             'q_DIVIDE_RBRACES',
             'q_DIVIDE_SEMICOLON',
@@ -149,6 +164,8 @@ statesID = [
             'q_ID_LINEBREAK',
             'q_ID_LPAREN',
             'q_ID_RPAREN',
+            'q_ID_LBRACKETS',
+            'q_ID_RBRACKETS',
             'q_ID_LBRACES',
             'q_ID_RBRACES',
             'q_ID_SEMICOLON',
@@ -168,6 +185,8 @@ states += statesIF
 states += statesELSE
 states += statesLPAREN
 states += statesRPAREN
+states += statesLBRACKETS
+states += statesRBRACKETS
 states += statesLBRACES
 states += statesRBRACES
 states += statesSEMICOLON
@@ -177,6 +196,7 @@ states += statesMINUS
 states += statesDIVIDE
 states += statesTIMES
 states += statesEQUALS
+states += statesDIFFERENT
 states += statesCOMMENT
 states += statesNUMBER
 states += statesID
@@ -326,6 +346,8 @@ transitionsLPAREN = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -404,6 +426,8 @@ transitionsRPAREN = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -472,6 +496,166 @@ transitionsRPAREN['q_RPAREN'].update({'r': 'q_RETURN_1'})
 
 # Mudar conexões de q_RPAREN para 'e': 'q_ELSE_1'
 transitionsRPAREN['q_RPAREN'].update({'e': 'q_ELSE_1'})
+
+transitionsLBRACKETS = {
+    'q0': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_LBRACKETS': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+    },
+    'q_INT_3': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_FLOAT_5': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_VOID_4': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_RETURN_6': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_IF_1': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_ELSE_4': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_NUMBER_1': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_NUMBER_2': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_DIVIDE_NUMBER': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_ID_1': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_ID_2': {
+        '[': 'q_LBRACKETS',
+    },
+    'q_DIVIDE_ID': {
+        '[': 'q_LBRACKETS',
+    }
+}
+
+# Adicionar conexões de q_LBRACKETS para q_ID_1 com todas as letras do alfabeto
+transitionsLBRACKETS['q_LBRACKETS'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_LBRACKETS para q_NUMBER_1 com todos os numeros
+transitionsLBRACKETS['q_LBRACKETS'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_LBRACKETS para 'i': 'q_INT_1'
+transitionsLBRACKETS['q_LBRACKETS'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_LBRACKETS para 'f': 'q_FLOAT_1'
+transitionsLBRACKETS['q_LBRACKETS'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_LBRACKETS para 'v': 'q_VOID_1'
+transitionsLBRACKETS['q_LBRACKETS'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_LBRACKETS para 'r': 'q_RETURN_1'
+transitionsLBRACKETS['q_LBRACKETS'].update({'r': 'q_RETURN_1'})
+
+# Mudar conexões de q_LBRACKETS para 'e': 'q_ELSE_1'
+transitionsLBRACKETS['q_LBRACKETS'].update({'e': 'q_ELSE_1'})
+
+transitionsRBRACKETS = {
+    'q0': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_RBRACKETS': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+    },
+    'q_INT_3': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_IF_1': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_ELSE_1': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_FLOAT_5': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_VOID_4': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_RETURN_6': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_NUMBER_1': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_NUMBER_2': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_DIVIDE_NUMBER': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_ID_1': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_ID_2': {
+        ']': 'q_RBRACKETS',
+    },
+    'q_DIVIDE_ID': {
+        ']': 'q_RBRACKETS',
+    }
+}
+
+# Adicionar conexões de q_RBRACKETS para q_ID_1 com todas as letras do alfabeto
+transitionsRBRACKETS['q_RBRACKETS'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_RBRACKETS para q_NUMBER_1 com todos os numeros
+transitionsRBRACKETS['q_RBRACKETS'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_RBRACKETS para 'i': 'q_INT_1'
+transitionsRBRACKETS['q_RBRACKETS'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_RBRACKETS para 'f': 'q_FLOAT_1'
+transitionsRBRACKETS['q_RBRACKETS'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_RBRACKETS para 'v': 'q_VOID_1'
+transitionsRBRACKETS['q_RBRACKETS'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_RBRACKETS para 'r': 'q_RETURN_1'
+transitionsRBRACKETS['q_RBRACKETS'].update({'r': 'q_RETURN_1'})
+
+# Mudar conexões de q_RBRACKETS para 'e': 'q_ELSE_1'
+transitionsRBRACKETS['q_RBRACKETS'].update({'e': 'q_ELSE_1'})
 
 transitionsLBRACES = {
     'q0': {
@@ -548,6 +732,8 @@ transitionsCOMMA = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -626,6 +812,8 @@ transitionsPLUS = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -704,6 +892,8 @@ transitionsMINUS = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -779,6 +969,8 @@ transitionsDIVIDE = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -857,6 +1049,8 @@ transitionsTIMES = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -940,6 +1134,8 @@ transitionsEQUALS = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -958,6 +1154,8 @@ transitionsEQUALS = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1014,6 +1212,19 @@ transitionsEQUALS['q_EQUALS_2'].update({'v': 'q_VOID_1'})
 # Mudar conexões de q_EQUALS_2 para 'r': 'q_RETURN_6'
 transitionsEQUALS['q_EQUALS_2'].update({'r': 'q_RETURN_6'})
 
+transitionsDIFFERENT = {
+    'q0': {
+        '!' : 'q_DIFFERENT_1',
+    },
+    'q_DIFFERENT_1': {
+        '=' : 'q_DIFFERENT_2',
+    },
+    'q_DIFFERENT_2': {
+        ' ' : 'q0',
+        '\n': 'q0',
+    }
+}
+
 transitionsCOMMENT = {
     'q0': {
         '/': 'q_COMMENT_1',
@@ -1024,6 +1235,8 @@ transitionsCOMMENT = {
         '\n': 'q_DIVIDE_LINEBREAK',
         '(' : 'q_DIVIDE_LPAREN',
         ')' : 'q_DIVIDE_RPAREN',
+        '[' : 'q_DIVIDE_LBRACKETS',
+        ']' : 'q_DIVIDE_RBRACKETS',
         '{' : 'q_DIVIDE_LBRACES',
         '}' : 'q_DIVIDE_RBRACES',
         ';' : 'q_DIVIDE_SEMICOLON',
@@ -1043,6 +1256,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1058,6 +1273,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1073,6 +1290,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1088,6 +1307,42 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+    },
+    'q_DIVIDE_LBRACKETS': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+    },
+    'q_DIVIDE_RBRACKETS': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1103,6 +1358,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1118,6 +1375,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1133,6 +1392,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1148,6 +1409,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(': 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1163,6 +1426,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1178,6 +1443,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1193,6 +1460,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1208,6 +1477,8 @@ transitionsCOMMENT = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1221,10 +1492,36 @@ transitionsCOMMENT = {
     'q_DIVIDE_NUMBER': {
         '\n': 'q0',
         ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
     },
     'q_DIVIDE_ID': {
         '\n': 'q0',
         ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
     }
 }
 
@@ -1526,6 +1823,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1541,6 +1840,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1556,6 +1857,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1571,6 +1874,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1586,6 +1891,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1601,6 +1908,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1616,6 +1925,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1631,6 +1942,8 @@ transitionsID = {
         ' ' : 'q0',
         '(': 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1646,6 +1959,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1661,6 +1976,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1676,6 +1993,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1691,6 +2010,8 @@ transitionsID = {
         ' ' : 'q0',
         '(' : 'q_LPAREN',
         ')' : 'q_RPAREN',
+        '[' : 'q_LBRACKETS',
+        ']' : 'q_RBRACKETS',
         '{' : 'q_LBRACES',
         '}' : 'q_RBRACES',
         ';' : 'q_SEMICOLON',
@@ -1706,6 +2027,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1720,6 +2043,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1734,6 +2059,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1748,6 +2075,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1762,6 +2091,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1776,6 +2107,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1790,6 +2123,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1804,6 +2139,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1818,6 +2155,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1832,6 +2171,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1846,6 +2187,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1860,6 +2203,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1874,6 +2219,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1888,6 +2235,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1902,6 +2251,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1916,6 +2267,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1930,6 +2283,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1944,6 +2299,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1958,6 +2315,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1972,6 +2331,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -1986,6 +2347,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -2000,6 +2363,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -2014,6 +2379,8 @@ transitionsID = {
         '\n': 'q_ID_LINEBREAK',
         '(' : 'q_ID_LPAREN',
         ')' : 'q_ID_RPAREN',
+        '[' : 'q_ID_LBRACKETS',
+        ']' : 'q_ID_RBRACKETS',
         '{' : 'q_ID_LBRACES',
         '}' : 'q_ID_RBRACES',
         ';' : 'q_ID_SEMICOLON',
@@ -2387,6 +2754,8 @@ transitions = combine_transitions(
     transitionsELSE,
     transitionsLPAREN, 
     transitionsRPAREN,
+    transitionsLBRACKETS,
+    transitionsRBRACKETS,
     transitionsLBRACES,
     transitionsRBRACES,
     transitionsSEMICOLON,
@@ -2396,6 +2765,7 @@ transitions = combine_transitions(
     transitionsDIVIDE,
     transitionsTIMES,
     transitionsEQUALS,
+    transitionsDIFFERENT,
     transitionsCOMMENT,
     transitionsNUMBER,
     transitionsID
@@ -2415,6 +2785,8 @@ tokens = ['INT',
           'ELSE',
           'LPAREN',
           'RPAREN',
+          'LBRACKETS',
+          'RBRACKETS',
           'LBRACES',
           'RBRACES',
           'SEMICOLON',
@@ -2486,6 +2858,14 @@ outputsRPAREN = {
                 'q_RPAREN' : 'RPAREN\n'
                 }
 
+outputsLBRACKETS = {
+                'q_LBRACKETS' : 'LBRACKETS\n'
+                }
+
+outputsRBRACKETS = {
+                'q_RBRACKETS' : 'RBRACKETS\n'
+                }
+
 outputsLBRACES = {
                 'q_LBRACES' : 'LBRACES\n'
                 }
@@ -2525,6 +2905,11 @@ outputsEQUALS = {
                 'q_EQUALS_2' : ''
                 }
 
+outputsDIFFERENT = {
+                'q_DIFFERENT_1' : '',
+                'q_DIFFERENT_2' : 'DIFFERENT\n'
+                }
+
 outputsCOMMENT = {
                 'q_COMMENT_1' : '',
                 'q_COMMENT_2' : '',
@@ -2533,6 +2918,8 @@ outputsCOMMENT = {
                 'q_DIVIDE_LINEBREAK' : 'DIVIDE\n',
                 'q_DIVIDE_LPAREN' : 'DIVIDE\nLPAREN\n',
                 'q_DIVIDE_RPAREN' : 'DIVIDE\nRPAREN\n',
+                'q_DIVIDE_LBRACKETS' : 'DIVIDE\nLBRACKETS\n',
+                'q_DIVIDE_RBRACKETS' : 'DIVIDE\nRBRACKETS\n',
                 'q_DIVIDE_LBRACES' : 'DIVIDE\nLBRACES\n',
                 'q_DIVIDE_RBRACES' : 'DIVIDE\nRBRACES\n',
                 'q_DIVIDE_SEMICOLON' : 'DIVIDE\nSEMICOLON\n',
@@ -2556,6 +2943,8 @@ outputsID = {
                 'q_ID_LINEBREAK' : 'ID\n',
                 'q_ID_LPAREN' : 'ID\nLPAREN\n',
                 'q_ID_RPAREN' : 'ID\nRPAREN\n',
+                'q_ID_LBRACKETS' : 'ID\nLBRACKETS\n',
+                'q_ID_RBRACKETS' : 'ID\nRBRACKETS\n',
                 'q_ID_LBRACES' : 'ID\nLBRACES\n',
                 'q_ID_RBRACES' : 'ID\nRBRACES\n',
                 'q_ID_SEMICOLON' : 'ID\nSEMICOLON\n',
@@ -2574,6 +2963,8 @@ outputs.update(outputsRETURN)
 outputs.update(outputsIF)
 outputs.update(outputsELSE)
 outputs.update(outputsLPAREN)
+outputs.update(outputsLBRACKETS)
+outputs.update(outputsRBRACKETS)
 outputs.update(outputsRPAREN)
 outputs.update(outputsLBRACES)
 outputs.update(outputsRBRACES)
@@ -2584,6 +2975,7 @@ outputs.update(outputsMINUS)
 outputs.update(outputsDIVIDE)
 outputs.update(outputsTIMES)
 outputs.update(outputsEQUALS)
+outputs.update(outputsDIFFERENT)
 outputs.update(outputsCOMMENT)
 outputs.update(outputsNUMBER)
 outputs.update(outputsID)
@@ -2620,8 +3012,8 @@ def moore_to_jflap(states, alphabet, tokens, transitions, initial_state, outputs
         # Define posições X e Y fictícias
         x = ET.SubElement(state_element, 'x')
         y = ET.SubElement(state_element, 'y')
-        x.text = str(100 + 150 * (int(state_map[state]) % 5))  # Posição X
-        y.text = str(100 + 150 * (int(state_map[state]) // 5))  # Posição Y
+        x.text = str(100 + 150 * (int(state_map[state]) % 10))  # Posição X
+        y.text = str(100 + 150 * (int(state_map[state]) // 10))  # Posição Y
 
         # Marca o estado inicial
         if state == initial_state:
