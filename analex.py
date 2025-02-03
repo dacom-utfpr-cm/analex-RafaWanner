@@ -3058,9 +3058,11 @@ def moore_to_jflap(states, alphabet, tokens, transitions, initial_state, outputs
 def main():
     check_cm = False
     check_key = False
+
+    if(len(sys.argv) < 2):
+        raise TypeError(error_handler.newError(check_key, 'ERR-LEX-USE'))
     
     for idx, arg in enumerate(sys.argv):
-        # print("Argument #{} is {}".format(idx, arg))
         aux = arg.split('.')
         if aux[-1] == 'cm':
             check_cm = True
@@ -3069,12 +3071,9 @@ def main():
         if(arg == "-k"):
             check_key = True
     
-    # print ("No. of arguments passed is ", len(sys.argv))
-
-    if(len(sys.argv) < 3):
-        raise TypeError(error_handler.newError(check_key, 'ERR-LEX-USE'))
-
-    if not check_cm:
+    if check_key and len(sys.argv) < 3:
+        raise TypeError(le.newError(checkKey, 'ERR-LEX-USE'))
+    elif not check_cm:
       raise IOError(error_handler.newError(check_key, 'ERR-LEX-NOT-CM'))
     elif not os.path.exists(sys.argv[idx_cm]):
         raise IOError(error_handler.newError(check_key, 'ERR-LEX-FILE-NOT-EXISTS'))
@@ -3082,21 +3081,41 @@ def main():
         data = open(sys.argv[idx_cm])
         source_file = data.read()
 
-        if not check_cm:
-            print("Definição da Máquina")
-            print(moore)
-            print("Entrada:")
-            print(source_file)
-            print("Lista de Tokens:")
-        
-        #print(moore)
+        try:
+            if not check_key:
+                print("Definição da Máquina:")
+                print(moore)
+                print("Entrada:")
+                print(source_file)
+                print("Lista de Tokens:")
+            
+            print(moore.get_output_from_string(source_file).rstrip('\n'))
 
-        print(moore.get_output_from_string(source_file).rstrip('\n'))
-
-        moore_to_jflap(states, fullList, tokens, transitions, 'q0', outputs, 'jflap/moore_machine.jff')
+            moore_to_jflap(states, fullList, tokens, transitions, 'q0', outputs, 'jflap/moore_machine.jff')
+        except Exception as e:
+            error_msg = str(e)
+    
+            # Tentando encontrar o caractere que causou o erro na entrada
+            for i, char in enumerate(source_file):
+                try:
+                    moore.get_output_from_string(source_file[:i+1])  # Tenta processar até o caractere atual
+                except Exception:
+                    # Encontramos a posição do erro
+                    error_index = i
+                    break
+            else:
+                error_index = None  # Caso não encontre
+            
+            if error_index is not None:
+                # Encontrar a linha e coluna do erro
+                line = source_file[:error_index].count('\n') + 1
+                last_newline = source_file[:error_index].rfind('\n')
+                column = (error_index - last_newline) if last_newline != -1 else error_index + 1
+                raise IOError(error_handler.newError(check_key, 'ERR-LEX-INV-CHAR', line, column, valor=e))
+            else:
+                line, column = "Desconhecido", "Desconhecido"
 
 if __name__ == "__main__":
-
     try:
         main()
     except Exception as e:
