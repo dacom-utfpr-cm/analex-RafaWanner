@@ -19,7 +19,7 @@ alphabet = list(string.ascii_lowercase + string.ascii_uppercase)
 
 numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-misc = ['\n', ' ', '(', ')', '[', ']', '{', '}', ';', ',', '+', '-', '/', '*', '=', '!']
+misc = ['\n', ' ', '(', ')', '[', ']', '{', '}', ';', ',', '+', '-', '/', '*', '=', '!', '<', '>']
 
 fullList = alphabet + numbers + misc
 
@@ -125,6 +125,20 @@ statesEQUALS= [
             'q_EQUALS_2'
             ]
 
+statesLESS= [
+            'q_LESS_1',
+            'q_LESS_2',
+            'q_LESS_EQUAL_1',
+            'q_LESS_EQUAL_2'
+            ]
+
+statesGREATER= [
+            'q_GREATER_1',
+            'q_GREATER_2',
+            'q_GREATER_EQUAL_1',
+            'q_GREATER_EQUAL_2'
+            ]
+
 statesDIFFERENT= [
             'q_DIFFERENT_1',
             'q_DIFFERENT_2'
@@ -196,6 +210,8 @@ states += statesMINUS
 states += statesDIVIDE
 states += statesTIMES
 states += statesEQUALS
+states += statesLESS
+states += statesGREATER
 states += statesDIFFERENT
 states += statesCOMMENT
 states += statesNUMBER
@@ -357,6 +373,8 @@ transitionsLPAREN = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '(' : 'q_LPAREN',
@@ -437,6 +455,8 @@ transitionsRPAREN = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         ')' : 'q_RPAREN',
@@ -517,6 +537,8 @@ transitionsLBRACKETS = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '[': 'q_LBRACKETS',
@@ -597,6 +619,8 @@ transitionsRBRACKETS = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         ']': 'q_RBRACKETS',
@@ -743,6 +767,8 @@ transitionsCOMMA = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         ',' : 'q_COMMA',
@@ -823,6 +849,8 @@ transitionsPLUS = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '+' : 'q_PLUS',
@@ -903,6 +931,8 @@ transitionsMINUS = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '-' : 'q_MINUS',
@@ -980,6 +1010,8 @@ transitionsDIVIDE = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '/' : 'q_COMMENT_1',
@@ -1060,6 +1092,8 @@ transitionsTIMES = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_3': {
         '*' : 'q_TIMES',
@@ -1144,6 +1178,9 @@ transitionsEQUALS = {
         '-' : 'q_MINUS',
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_EQUALS_1': {
         '\n': 'q_EQUALS_2',
@@ -1165,6 +1202,8 @@ transitionsEQUALS = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     }
 }
 
@@ -1211,6 +1250,200 @@ transitionsEQUALS['q_EQUALS_2'].update({'v': 'q_VOID_1'})
 
 # Mudar conexões de q_EQUALS_2 para 'r': 'q_RETURN_6'
 transitionsEQUALS['q_EQUALS_2'].update({'r': 'q_RETURN_6'})
+
+transitionsLESS = {
+    'q0': {
+        '<' : 'q_LESS_1',
+    },
+    'q_LESS_1': {
+        '\n': 'q_LESS_2',
+        ' ' : 'q_LESS_2',
+        '=' : 'q_LESS_EQUAL_1',
+    },
+    'q_LESS_2': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
+    },
+    'q_LESS_EQUAL_1': {
+        '\n': 'q_LESS_EQUAL_2',
+        ' ' : 'q_LESS_EQUAL_2',
+    },
+    'q_LESS_EQUAL_2': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
+    }
+}
+
+"""
+    Busca por todas as opções possiveis após q_LESS_2
+"""
+
+# Adicionar conexões de q_LESS_2 para q_ID_1 com todas as letras do alfabeto
+transitionsLESS['q_LESS_2'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_LESS_2 para q_NUMBER_1 com todos os numeros
+transitionsLESS['q_LESS_2'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_LESS_2 para 'i': 'q_INT_1'
+transitionsLESS['q_LESS_2'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_LESS_2 para 'f': 'q_FLOAT_1'
+transitionsLESS['q_LESS_2'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_LESS_2 para 'v': 'q_VOID_1'
+transitionsLESS['q_LESS_2'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_LESS_2 para 'r': 'q_RETURN_6'
+transitionsLESS['q_LESS_2'].update({'r': 'q_RETURN_6'})
+
+"""
+    Busca por todas as opções possiveis após q_LESS_EQUAL_2
+"""
+
+# Adicionar conexões de q_LESS_EQUAL_2 para q_ID_1 com todas as letras do alfabeto
+transitionsLESS['q_LESS_EQUAL_2'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_LESS_EQUAL_2 para q_NUMBER_1 com todos os numeros
+transitionsLESS['q_LESS_EQUAL_2'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_LESS_EQUAL_2 para 'i': 'q_INT_1'
+transitionsLESS['q_LESS_EQUAL_2'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_LESS_EQUAL_2 para 'f': 'q_FLOAT_1'
+transitionsLESS['q_LESS_EQUAL_2'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_LESS_EQUAL_2 para 'v': 'q_VOID_1'
+transitionsLESS['q_LESS_EQUAL_2'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_LESS_EQUAL_2 para 'r': 'q_RETURN_6'
+transitionsLESS['q_LESS_EQUAL_2'].update({'r': 'q_RETURN_6'})
+
+transitionsGREATER = {
+    'q0': {
+        '>' : 'q_GREATER_1',
+    },
+    'q_GREATER_1': {
+        '\n': 'q_GREATER_2',
+        ' ' : 'q_GREATER_2',
+        '=' : 'q_GREATER_EQUAL_1',
+    },
+    'q_GREATER_2': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
+    },
+    'q_GREATER_EQUAL_1': {
+        '\n': 'q_GREATER_EQUAL_2',
+        ' ' : 'q_GREATER_EQUAL_2',
+    },
+    'q_GREATER_EQUAL_2': {
+        '\n': 'q0',
+        ' ' : 'q0',
+        '(' : 'q_LPAREN',
+        ')' : 'q_RPAREN',
+        '[': 'q_LBRACKETS',
+        ']': 'q_RBRACKETS',
+        '{' : 'q_LBRACES',
+        '}' : 'q_RBRACES',
+        ';' : 'q_SEMICOLON',
+        ',' : 'q_COMMA',
+        '+' : 'q_PLUS',
+        '-' : 'q_MINUS',
+        '/' : 'q_COMMENT_1',
+        '*' : 'q_TIMES',
+        '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
+    }
+}
+
+"""
+    Busca por todas as opções possiveis após q_GREATER_2
+"""
+
+# Adicionar conexões de q_GREATER_2 para q_ID_1 com todas as letras do alfabeto
+transitionsGREATER['q_GREATER_2'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_GREATER_2 para q_NUMBER_1 com todos os numeros
+transitionsGREATER['q_GREATER_2'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_GREATER_2 para 'i': 'q_INT_1'
+transitionsGREATER['q_GREATER_2'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_GREATER_2 para 'f': 'q_FLOAT_1'
+transitionsGREATER['q_GREATER_2'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_GREATER_2 para 'v': 'q_VOID_1'
+transitionsGREATER['q_GREATER_2'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_GREATER_2 para 'r': 'q_RETURN_6'
+transitionsGREATER['q_GREATER_2'].update({'r': 'q_RETURN_6'})
+
+"""
+    Busca por todas as opções possiveis após q_GREATER_EQUAL_2
+"""
+
+# Adicionar conexões de q_GREATER_EQUAL_2 para q_ID_1 com todas as letras do alfabeto
+transitionsGREATER['q_GREATER_EQUAL_2'].update({letter: 'q_ID_1' for letter in alphabet})
+
+# Adicionar conexões de q_GREATER_EQUAL_2 para q_NUMBER_1 com todos os numeros
+transitionsGREATER['q_GREATER_EQUAL_2'].update({number: 'q_NUMBER_1' for number in numbers})
+
+# Mudar conexões de q_GREATER_EQUAL_2 para 'i': 'q_INT_1'
+transitionsGREATER['q_GREATER_EQUAL_2'].update({'i': 'q_INT_1'})
+
+# Mudar conexões de q_GREATER_EQUAL_2 para 'f': 'q_FLOAT_1'
+transitionsGREATER['q_GREATER_EQUAL_2'].update({'f': 'q_FLOAT_1'})
+
+# Mudar conexões de q_GREATER_EQUAL_2 para 'v': 'q_VOID_1'
+transitionsGREATER['q_GREATER_EQUAL_2'].update({'v': 'q_VOID_1'})
+
+# Mudar conexões de q_GREATER_EQUAL_2 para 'r': 'q_RETURN_6'
+transitionsGREATER['q_GREATER_EQUAL_2'].update({'r': 'q_RETURN_6'})
 
 transitionsDIFFERENT = {
     'q0': {
@@ -1267,6 +1500,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_LINEBREAK': {
         '\n': 'q0',
@@ -1284,6 +1519,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_LPAREN': {
         '\n': 'q0',
@@ -1301,6 +1538,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_RPAREN': {
         '\n': 'q0',
@@ -1318,6 +1557,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_LBRACKETS': {
         '\n': 'q0',
@@ -1335,6 +1576,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_RBRACKETS': {
         '\n': 'q0',
@@ -1352,6 +1595,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_LBRACES': {
         '\n': 'q0',
@@ -1369,6 +1614,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_RBRACES': {
         '\n': 'q0',
@@ -1386,6 +1633,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_SEMICOLON': {
         '\n': 'q0',
@@ -1403,6 +1652,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_COMMA': {
         '\n': 'q0',
@@ -1420,6 +1671,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_PLUS': {
         '\n': 'q0',
@@ -1437,6 +1690,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_MINUS': {
         '\n': 'q0',
@@ -1454,6 +1709,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_DIVIDE': {
         '\n': 'q0',
@@ -1471,6 +1728,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_TIMES': {
         '\n': 'q0',
@@ -1488,6 +1747,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_NUMBER': {
         '\n': 'q0',
@@ -1505,6 +1766,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_DIVIDE_ID': {
         '\n': 'q0',
@@ -1522,6 +1785,8 @@ transitionsCOMMENT = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     }
 }
 
@@ -1834,6 +2099,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_LINEBREAK': {
         '\n': 'q0',
@@ -1851,6 +2118,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_LPAREN': {
         '\n': 'q0',
@@ -1868,6 +2137,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_RPAREN': {
         '\n': 'q0',
@@ -1885,6 +2156,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_LBRACES': {
         '\n': 'q0',
@@ -1902,6 +2175,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_RBRACES': {
         '\n': 'q0',
@@ -1919,6 +2194,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_SEMICOLON': {
         '\n': 'q0',
@@ -1936,6 +2213,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_COMMA': {
         '\n': 'q0',
@@ -1953,6 +2232,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_PLUS': {
         '\n': 'q0',
@@ -1970,6 +2251,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_MINUS': {
         '\n': 'q0',
@@ -1987,6 +2270,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_DIVIDE': {
         '\n': 'q0',
@@ -2004,6 +2289,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_ID_TIMES': {
         '\n': 'q0',
@@ -2021,6 +2308,8 @@ transitionsID = {
         '/' : 'q_COMMENT_1',
         '*' : 'q_TIMES',
         '=' : 'q_ATTRIBUTION_1',
+        '<' : 'q_LESS_1',
+        '>' : 'q_GREATER_1',
     },
     'q_INT_1': {
         ' ' : 'q_ID_SPACE',
@@ -2765,6 +3054,8 @@ transitions = combine_transitions(
     transitionsDIVIDE,
     transitionsTIMES,
     transitionsEQUALS,
+    transitionsLESS,
+    transitionsGREATER,
     transitionsDIFFERENT,
     transitionsCOMMENT,
     transitionsNUMBER,
@@ -2797,6 +3088,10 @@ tokens = ['INT',
           'TIMES',
           'ATTRIBUTION',
           'EQUALS',
+          'LESS',
+          'LESS_EQUAL',
+          'GREATER',
+          'GREATER_EQUAL',
           'NUMBER',
           'ID'
           ]
@@ -2905,6 +3200,20 @@ outputsEQUALS = {
                 'q_EQUALS_2' : ''
                 }
 
+outputsLESS = {
+                'q_LESS_1' : '',
+                'q_LESS_2' : 'LESS\n',
+                'q_LESS_EQUAL_1' : 'LESS_EQUAL\n',
+                'q_LESS_EQUAL_2' : ''
+                }
+
+outputsGREATER = {
+                'q_GREATER_1' : '',
+                'q_GREATER_2' : 'GREATER\n',
+                'q_GREATER_EQUAL_1' : 'GREATER_EQUAL\n',
+                'q_GREATER_EQUAL_2' : ''
+                }
+
 outputsDIFFERENT = {
                 'q_DIFFERENT_1' : '',
                 'q_DIFFERENT_2' : 'DIFFERENT\n'
@@ -2975,6 +3284,8 @@ outputs.update(outputsMINUS)
 outputs.update(outputsDIVIDE)
 outputs.update(outputsTIMES)
 outputs.update(outputsEQUALS)
+outputs.update(outputsLESS)
+outputs.update(outputsGREATER)
 outputs.update(outputsDIFFERENT)
 outputs.update(outputsCOMMENT)
 outputs.update(outputsNUMBER)
@@ -3092,6 +3403,7 @@ def main():
             print(moore.get_output_from_string(source_file).rstrip('\n'))
 
             moore_to_jflap(states, fullList, tokens, transitions, 'q0', outputs, 'jflap/moore_machine.jff')
+            
         except Exception as e:
             error_msg = str(e)
     
