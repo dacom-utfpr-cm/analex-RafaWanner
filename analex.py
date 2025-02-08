@@ -3383,7 +3383,7 @@ def main():
             check_key = True
     
     if check_key and len(sys.argv) < 3:
-        raise TypeError(le.newError(checkKey, 'ERR-LEX-USE'))
+        raise TypeError(error_handler.newError(check_key, 'ERR-LEX-USE'))
     elif not check_cm:
       raise IOError(error_handler.newError(check_key, 'ERR-LEX-NOT-CM'))
     elif not os.path.exists(sys.argv[idx_cm]):
